@@ -18,9 +18,9 @@ const closeModal = (modal) => {
   document.removeEventListener("keydown", handleEscKeyUp); // удалить слушатель на кнопку Escape
 };
 
-// Функция для того, чтобы повесить слушатель
-const hangListener = (element) => {
-  let popupCloseButton = element.querySelector(".popup__close");
+// Функция для того, чтобы повесить слушатели
+const hangListeners = (element) => {
+  const popupCloseButton = element.querySelector(".popup__close");
   popupCloseButton.addEventListener("click", () => {
     closeModal(element);
   });
@@ -32,4 +32,4 @@ const hangListener = (element) => {
   });
 };
 
-export { openModal, closeModal, hangListener };
+export { openModal, closeModal, hangListeners };

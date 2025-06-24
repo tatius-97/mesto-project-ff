@@ -1,53 +1,8 @@
 //  Список импортов
 import "../pages/index.css";
 import { initialCards } from "./cards";
-import { removeCard, createCard } from "./card";
-import { openModal, closeModal, hangListener } from "./modal";
-
-// Список экспортов
-export { enlargeCardImage };
-
-// Переменные галереи
-const logo = new URL("../images/logo.svg", import.meta.url);
-const avatar = new URL("../images/avatar.jpg", import.meta.url);
-const addIcon = new URL("../images/add-icon.svg", import.meta.url);
-const cardFirst = new URL("../images/card_1.jpg", import.meta.url);
-const cardSecond = new URL("../images/card_2.jpg", import.meta.url);
-const cardThird = new URL("../images/card_3.jpg", import.meta.url);
-const buttonClose = new URL("../images/close.svg", import.meta.url);
-const iconDelete = new URL("../images/delete-icon.svg", import.meta.url);
-const iconEdit = new URL("../images/edit-icon.svg", import.meta.url);
-const likeActive = new URL("../images/like-active.svg", import.meta.url);
-const likeInactive = new URL("../images/like-inactive.svg", import.meta.url);
-const interBlack = new URL(
-  "../vendor/fonts/Inter-Black.woff2",
-  import.meta.url
-);
-const interMedium = new URL(
-  "../vendor/fonts/Inter-Medium.woff2",
-  import.meta.url
-);
-const interRegular = new URL(
-  "../vendor/fonts/Inter-Regular.woff2",
-  import.meta.url
-);
-
-const imageList = [
-  { name: "logo", link: logo },
-  { name: "avatar", link: avatar },
-  { name: "Add Icon", link: addIcon },
-  { name: "card_1", link: cardFirst },
-  { name: "card_2", link: cardSecond },
-  { name: "card_3", link: cardThird },
-  { name: "close", link: buttonClose },
-  { name: "delete-icon", link: iconDelete },
-  { name: "edit-icon", link: iconEdit },
-  { name: "like-active", link: likeActive },
-  { name: "like-inactive", link: likeInactive },
-  { name: "Inter Black", link: interBlack },
-  { name: "Inter Medium", link: interMedium },
-  { name: "Inter Regular", link: interRegular },
-];
+import { removeCard, createCard, likeCard } from "./card";
+import { openModal, closeModal, hangListeners } from "./modal";
 
 // Объявление переменных
 const placesList = document.querySelector(".places__list");
@@ -74,9 +29,16 @@ const newPlaceName = formNewPlace.elements.placeName;
 const newPlaceLink = formNewPlace.elements.link;
 
 // Функции, чтобы повесить слушатель
-hangListener(profilePopup);
-hangListener(newCardPopup);
-hangListener(imagePopup);
+hangListeners(profilePopup);
+hangListeners(newCardPopup);
+hangListeners(imagePopup);
+
+//  Объект с колбэками для карточки (удаление, лайк, увеличение)
+const callbacks = {
+  removeNodeCallback: removeCard,
+  likeCardCallback: likeCard,
+  enlargeCardImageCallback: enlargeCardImage,
+};
 
 // Слушатели для каждого вида попапа вешаем на кнопку
 // Слушатель попапа профиля
@@ -84,7 +46,6 @@ editButton.addEventListener("click", () => {
   openModal(profilePopup);
   nameInput.value = profileName.textContent;
   jobInput.value = profileJob.textContent;
-
   formElementProfile.addEventListener("submit", handleFormProfileSubmit);
 });
 
@@ -94,18 +55,12 @@ addButton.addEventListener("click", () => {
   formNewPlace.addEventListener("submit", handleFormNewCardSubmit);
 });
 
-// Слушатель попап картинки
-imagePopup.addEventListener("click", () => {
-  openModal(imagePopup);
-  closeModal(imagePopup);
-});
-
 // Функция увеличения картинки
-function enlargeCardImage(cardSrc, cardName) {
+function enlargeCardImage({ name, link }) {
+  popupImageLarge.src = link;
+  popupImageLarge.alt = name;
+  popupImageCaption.textContent = name;
   openModal(imagePopup);
-  popupImageLarge.src = cardSrc;
-  popupImageLarge.alt = cardName;
-  popupImageCaption.textContent = cardName;
 }
 
 //  Реализуем функцию редактирования профиля
@@ -113,20 +68,18 @@ function handleFormProfileSubmit(evt) {
   evt.preventDefault();
   profileName.textContent = nameInput.value;
   profileJob.textContent = jobInput.value;
-
   closeModal(profilePopup);
-  formElementProfile.reset();
 }
 
 // Вынесение карточек на страницу
 initialCards.forEach(function (cardData) {
-  const cardNode = createCard(cardData, removeCard);
+  const cardNode = createCard(cardData, callbacks);
   placesList.append(cardNode);
 });
 
 // Добавление новой карточки
 function createNewCard(cardElement) {
-  const newCardElement = createCard(cardElement, removeCard);
+  const newCardElement = createCard(cardElement, callbacks);
   placesList.prepend(newCardElement);
 }
 
