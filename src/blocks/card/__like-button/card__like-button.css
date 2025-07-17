@@ -1,3 +1,9 @@
+.like-icon {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
 .card__like-button {
   width: 21px;
   height: 18px;
@@ -17,4 +23,13 @@
 
 .card__like-button:hover {
   opacity: 0.6;
+}
+
+.like-count {
+  font-family: Inter, sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 1;
+  color: #000;
+  text-align: center;
 }
