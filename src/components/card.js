@@ -39,7 +39,7 @@ function createCard(card, callbacksObject, userId) {
           console.log("Ошибка", err);
         });
     });
-};
+}
 
   renderLikes(card, { cardLikeButton, likesCount }, userId);
 

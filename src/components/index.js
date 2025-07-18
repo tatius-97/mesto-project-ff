@@ -90,21 +90,20 @@ editButton.addEventListener("click", () => {
   openModal(profilePopup);
   nameInput.value = profileName.textContent;
   jobInput.value = profileJob.textContent;
-  formElementProfile.addEventListener("submit", handleFormProfileSubmit);
 });
 
 // Слушатель попапа смены аватара
 profileAvatar.addEventListener("click", () => {
+  formElementAvatar.reset();
   clearValidation(formElementAvatar, settingsObject); // очистка формы с аватркой от ошибок формы
   openModal(profileAvatarPopup);
-  formElementAvatar.addEventListener("submit", handleFormAvatarSubmit);
 });
 
 // Слушатель попапа добавления карточки
 addButton.addEventListener("click", () => {
+  formNewPlace.reset();
   clearValidation(formNewPlace, settingsObject); // очищаем форму от ошибок
   openModal(newCardPopup);
-  formNewPlace.addEventListener("submit", handleFormNewCardSubmit);
 });
 
 // Функция увеличения картинки
@@ -129,13 +128,13 @@ function handleFormProfileSubmit(evt) {
     .then((data) => {
       profileName.textContent = data.name;
       profileJob.textContent = data.about;
+      closeModal(profilePopup);
     })
     .catch((err) => {
       console.log("Ошибка", err);
     })
     .finally(() => {
       buttonSave.textContent = initialButtonText;
-      closeModal(profilePopup);
     });
 };
 
@@ -151,15 +150,20 @@ function handleFormAvatarSubmit(evt) {
   changeAvatar(newAvatar)
     .then((data) => {
       profileAvatar.style.backgroundImage = `url(${data.avatar})`;
+      closeModal(profileAvatarPopup);
     })
     .catch((err) => {
       console.log("Ошибка", err);
     })
     .finally(() => {
       buttonSave.textContent = initialButtonText;
-      closeModal(profileAvatarPopup);
     });
 };
+
+// Слушатели для отправки форм
+formElementProfile.addEventListener("submit", handleFormProfileSubmit);
+formElementAvatar.addEventListener("submit", handleFormAvatarSubmit);
+formNewPlace.addEventListener("submit", handleFormNewCardSubmit);
 
 // Подтвердить добавление новой карточки
 function handleFormNewCardSubmit(evt) {
@@ -176,16 +180,17 @@ function handleFormNewCardSubmit(evt) {
   // Добавление новой карточки
   addNewCard(cardElement.name, cardElement.link)
     .then((data) => {
-      const newCardElement = createCard(data, data._id, callbacks);
+      const userId = data.owner._id;
+      const newCardElement = createCard(data, callbacks, userId);
       placesList.prepend(newCardElement);
+       closeModal(newCardPopup);
+       formNewPlace.reset();
     })
     .catch((err) => {
       console.log("Ошибка", err);
     })
     .finally(() => {
       buttonSave.textContent = initialButtonText;
-      closeModal(newCardPopup);
-      formNewPlace.reset();
     });
 };
 

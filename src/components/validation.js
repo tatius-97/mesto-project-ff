@@ -38,14 +38,24 @@ const isValid = (formElement, inputElement, settingsObject) => {
   })
 };
 
-// Функция отключения и включения кнопки сохранить 
-const toggleButtonState = (allInputs, buttonElement, settingsObject) => {
-  if (hasInvalidInput(allInputs)) {
+// Функция деактивации кнопки
+const disableSubmitButton = (buttonElement, settingsObject) => {
     buttonElement.disabled = true;
     buttonElement.classList.add(settingsObject.inactiveButtonClass);
-  } else {
+};
+
+// Функция активации кнопки
+const enableSubmitButton = (buttonElement, settingsObject) => {
     buttonElement.disabled = false;
     buttonElement.classList.remove(settingsObject.inactiveButtonClass);
+};
+
+// Функция  проверки включения и отключения кнопки
+const toggleButtonState = (allInputs, buttonElement, settingsObject) => {
+  if (hasInvalidInput(allInputs)) {
+    disableSubmitButton(buttonElement, settingsObject);
+  } else {
+    enableSubmitButton(buttonElement, settingsObject);
   }
 };
 
@@ -79,7 +89,6 @@ function clearValidation(formElement, settingsObject) {
     allInputs.forEach((inputElement) => {
         hideInputError(formElement, inputElement, settingsObject);
     });
-    buttonElement.disabled = true;
-    buttonElement.classList.add(settingsObject.inactiveButtonClass);
+    disableSubmitButton(buttonElement, settingsObject);
 };
 
